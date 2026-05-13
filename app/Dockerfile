@@ -1,8 +1,8 @@
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
 WORKDIR /app
 
-RUN apt-get update && apt-get upgrade -y && apt-get clean
+RUN apk update && apk upgrade
 
 COPY requirements.txt .
 
