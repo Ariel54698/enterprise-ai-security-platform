@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: security-runtime-api
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: security-runtime-api
+
+  template:
+    metadata:
+      labels:
+        app: security-runtime-api
+
+    spec:
+      containers:
+      - name: security-runtime-api
+
+        image: me-west1-docker.pkg.dev/enterprise-bank-495917/security-platform-repo/security-runtime-api:latest
+
+        ports:
+        - containerPort: 8080

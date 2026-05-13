@@ -1,0 +1,51 @@
+name: Enterprise Security Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  security-scans:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set Up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install Dependencies
+      run: |
+        pip install -r app/requirements.txt
+
+    - name: Run Bandit SAST Scan
+      run: |
+        pip install bandit
+        bandit -r app/
+
+    - name: Run Dependency Scan
+      run: |
+        pip install pip-audit
+        pip-audit
+
+    - name: Run Secret Scan
+      uses: gitleaks/gitleaks-action@v2
+
+    - name: Build Docker Image
+      run: |
+        docker build -t security-runtime-api ./app
+
+    - name: Run Trivy Container Scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: security-runtime-api
+        format: table
+        exit-code: 1
+        severity: CRITICAL,HIGH
